@@ -10,14 +10,16 @@ def main():
         if choice == '1':
             # get input, call add_expense
             e.print_header("Add Expense")
-            name = e.get_valid_description()
+            description = e.get_valid_description()
             amount = e.get_valid_amount()
             category = e.get_valid_category()
-            e.add_expense(expenses, name, amount, category)
-            print('c1')
+            e.add_expense(expenses, description, amount, category)
+            print('')
         elif choice == '2':
             # call display_all
-            print('c2')
+            e.print_header("View All Expenses")
+            e.print_all_expenses(expenses)
+            print('')
         elif choice == '3':
             # get category, call get_category_total
             print('c3')

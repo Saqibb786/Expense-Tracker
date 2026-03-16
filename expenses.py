@@ -4,6 +4,9 @@ import os
 
 
 def print_menu():
+    print(f'{'='*30}')
+    print(f"{'PERSONAL EXPENSE TRACKER':^30}")
+    print(f'{'='*30}')
     print('1. Add expense')
     print('2. View all expenses')
     print('3. View total by category')
@@ -13,6 +16,11 @@ def print_menu():
 
 def print_header(title):
     print(f"\n--- {title} ---")
+
+
+def print_all_expenses(expenses):
+    for expense in expenses:
+        print(f"{expense["description"]:<15}: ${expense['amount']:.2f}")
 
 
 def get_valid_description():
@@ -55,11 +63,11 @@ def get_valid_category():
         print(e)
 
 
-def add_expense(expenses, name, amount, category="Other"):
+def add_expense(expenses, description, amount, category="Other"):
     current_datetime = str(datetime.now().strftime("%Y-%m-%d %H-%M"))
     new_expense = {
         "date": current_datetime,
-        'name': name,
+        'description': description,
         'amount': amount,
         'category': category
     }
@@ -74,7 +82,7 @@ def load_expenses(filename):
             reader = csv.DictReader(file)
             expenses = [{
                 "date": row['date'],
-                'name': row['name'],
+                'description': row['description'],
                 'amount': float(row['amount']),
                 'category': row['category']
             } for row in reader]
@@ -92,7 +100,7 @@ def save_expenses(expenses, filename):
     file_exists = os.path.isfile(filename)
 
     with open(filename, "a", newline="") as file:
-        fieldnames = ["date", "name", "amount", "category"]
+        fieldnames = ["date", "description", "amount", "category"]
         writer = csv.DictWriter(file, fieldnames)
         if not file_exists:
             writer.writeheader()
