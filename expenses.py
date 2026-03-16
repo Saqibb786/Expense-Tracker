@@ -19,6 +19,9 @@ def print_header(title):
 
 
 def print_all_expenses(expenses):
+    if not expenses:
+        print("No expenses recorded yet.")
+        return
     for expense in expenses:
         print(f"{expense["description"]:<15}: ${expense['amount']:.2f}")
     print(f"{'TOTAL SPENDING':<15}= ${get_total_spending(expenses):.2f}")
@@ -35,7 +38,7 @@ def print_monthly_summary(expenses):
     monthly_expenses = get_monthly_expenses(expenses)
     summary = {}
     for month, expenses in monthly_expenses.items():
-        summary[month] = sum([expense["amount"] for expense in expenses])
+        summary[month] = sum(expense["amount"] for expense in expenses)
         print(f"{month:<15}: ${summary[month]:.2f}")
 
 
@@ -55,7 +58,7 @@ def get_valid_amount():
     while True:
         try:
             amount = float(input(f"{'Enter amount':<15}: "))
-            if (amount < 0):
+            if (amount <= 0):
                 print("Amount must be greater than zero! Try Again..\n")
                 continue
             return amount
@@ -65,18 +68,15 @@ def get_valid_amount():
 
 def get_valid_category():
     valid = ['Food', 'Transport', 'Entertainment', 'Other']
-    try:
+    while True:
         category = input(f"{'Enter category':<15}: ").capitalize()
-        if (len(category) < 2):
-            raise ValueError(
-                "Category name must be greater than two characters! Try Again..\n")
+        if len(category) < 2:
+            print("Category must be at least 2 characters. Try again.")
+            continue
         if category not in valid:
-            print(
-                "Category set to 'Other' as its not in ('Food', 'Transport', 'Entertainment')\n")
+            print("Category set to 'Other'.\n")
             category = "Other"
         return category
-    except ValueError as e:
-        print(e)
 
 
 def add_expense(expenses, description, amount, category="Other"):
@@ -125,7 +125,7 @@ def save_expenses(expenses, filename):
 
 
 def get_total_spending(expenses):
-    return sum([expense['amount'] for expense in expenses])
+    return sum(expense['amount'] for expense in expenses)
 
 
 def get_spending_by_category(expenses):
@@ -140,9 +140,6 @@ def get_spending_by_category(expenses):
 
 def get_monthly_expenses(expenses):
     monthly_expenses = {}
-    # dt = datetime.strptime(date_str, "%Y-%m-%d %H-%M")
-    # month = dt.month
-    # print(month)
     for expense in expenses:
         month = datetime.strptime(
             expense["date"], "%Y-%m-%d %H-%M").strftime("%B")
@@ -150,6 +147,3 @@ def get_monthly_expenses(expenses):
             monthly_expenses[month] = []
         monthly_expenses[month].append(expense)
     return monthly_expenses
-
-# get_category_total(expenses, category)
-# get_monthly_summary(expenses)

@@ -6,7 +6,7 @@ def main():
     expenses = e.load_expenses(filename='data.csv')
     while True:
         e.print_menu()
-        choice = input('Enter choice (1-5): ')
+        choice = input('Enter choice (1-5): ').strip()
         if choice == '1':
             # get input, call add_expense
             e.print_header("Add Expense")
