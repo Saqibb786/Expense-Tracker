@@ -21,6 +21,14 @@ def print_header(title):
 def print_all_expenses(expenses):
     for expense in expenses:
         print(f"{expense["description"]:<15}: ${expense['amount']:.2f}")
+    print(f"{'TOTAL SPENDING':<15}= ${get_total_spending(expenses):.2f}")
+
+
+def print_spending_by_category(expenses):
+    expenses = get_spending_by_category(expenses)
+    for key, value in expenses.items():
+        flag = "⚠️" if value > 100 else ""
+        print(f"{key:<15}: ${value:.2f} {flag}")
 
 
 def get_valid_description():
@@ -51,13 +59,13 @@ def get_valid_category():
     valid = ['Food', 'Transport', 'Entertainment', 'Other']
     try:
         category = input(f"{'Enter category':<15}: ").capitalize()
-        if category not in valid:
-            print(
-                "Category set to Other as its not in ('Food', 'Transport', 'Entertainment')\n")
-            category = "Other"
         if (len(category) < 2):
             raise ValueError(
-                "Category must be greater than two characters! Try Again..\n")
+                "Category name must be greater than two characters! Try Again..\n")
+        if category not in valid:
+            print(
+                "Category set to 'Other' as its not in ('Food', 'Transport', 'Entertainment')\n")
+            category = "Other"
         return category
     except ValueError as e:
         print(e)
@@ -105,9 +113,22 @@ def save_expenses(expenses, filename):
         if not file_exists:
             writer.writeheader()
         writer.writerows(expenses)
-    print(f"Saved {len(expenses)} Records Successfully!")
+    print(f"✅ Expense added successfully.")
 
-# add_expense(expenses, name, amount, category)
+
+def get_total_spending(expenses):
+    return sum([expense['amount'] for expense in expenses])
+
+
+def get_spending_by_category(expenses):
+    summary = {}
+    for expense in expenses:
+        cat = expense["category"]
+        if cat not in summary:
+            summary[cat] = 0
+        summary[cat] += expense["amount"]
+    return summary
+
+
 # get_category_total(expenses, category)
 # get_monthly_summary(expenses)
-# display_all(expenses)

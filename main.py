@@ -22,7 +22,8 @@ def main():
             print('')
         elif choice == '3':
             # get category, call get_category_total
-            print('c3')
+            e.print_spending_by_category(expenses)
+            print('')
         elif choice == '4':
             # call get_monthly_summary
             print('c4')
