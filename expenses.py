@@ -31,6 +31,14 @@ def print_spending_by_category(expenses):
         print(f"{key:<15}: ${value:.2f} {flag}")
 
 
+def print_monthly_summary(expenses):
+    monthly_expenses = get_monthly_expenses(expenses)
+    summary = {}
+    for month, expenses in monthly_expenses.items():
+        summary[month] = sum([expense["amount"] for expense in expenses])
+        print(f"{month:<15}: ${summary[month]:.2f}")
+
+
 def get_valid_description():
     while True:
         try:
@@ -129,6 +137,19 @@ def get_spending_by_category(expenses):
         summary[cat] += expense["amount"]
     return summary
 
+
+def get_monthly_expenses(expenses):
+    monthly_expenses = {}
+    # dt = datetime.strptime(date_str, "%Y-%m-%d %H-%M")
+    # month = dt.month
+    # print(month)
+    for expense in expenses:
+        month = datetime.strptime(
+            expense["date"], "%Y-%m-%d %H-%M").strftime("%B")
+        if month not in monthly_expenses:
+            monthly_expenses[month] = []
+        monthly_expenses[month].append(expense)
+    return monthly_expenses
 
 # get_category_total(expenses, category)
 # get_monthly_summary(expenses)

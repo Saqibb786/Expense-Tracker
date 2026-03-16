@@ -22,16 +22,19 @@ def main():
             print('')
         elif choice == '3':
             # get category, call get_category_total
+            e.print_header("Spending By Category")
             e.print_spending_by_category(expenses)
             print('')
         elif choice == '4':
             # call get_monthly_summary
-            print('c4')
+            e.print_header("Spending By Month")
+            e.print_monthly_summary(expenses)
+            print('')
         elif choice == '5':
             print('GoodBye 😊')
             break
         else:
-            print("Invalid Choice! Try Again..")
+            print("Invalid Choice! Try Again..\n")
 
 
 if __name__ == "__main__":
