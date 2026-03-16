@@ -1,16 +1,15 @@
 import expenses as e
+from datetime import datetime
 
 
 def main():
-    expenses = []
-
+    expenses = e.load_expenses(filename='data.csv')
     while True:
         e.print_menu()
         choice = input('Enter choice (1-5): ')
         if choice == '1':
             # get input, call add_expense
             e.print_header("Add Expense")
-
             name = e.get_valid_description()
             amount = e.get_valid_amount()
             category = e.get_valid_category()

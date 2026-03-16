@@ -1,3 +1,8 @@
+from datetime import datetime
+import csv
+import os
+
+
 def print_menu():
     print('1. Add expense')
     print('2. View all expenses')
@@ -16,7 +21,7 @@ def get_valid_description():
             description = input(f"{"Enter Description":<15}: ").capitalize()
             if (len(description) < 2):
                 raise ValueError(
-                    "Description must be greater than two characters! Try Again..\m")
+                    "Description must be greater than two characters! Try Again..")
             return description
         except ValueError as e:
             print(e)
@@ -51,15 +56,49 @@ def get_valid_category():
 
 
 def add_expense(expenses, name, amount, category="Other"):
-    expenses.append({
+    current_datetime = str(datetime.now().strftime("%Y-%m-%d %H-%M"))
+    new_expense = {
+        "date": current_datetime,
         'name': name,
         'amount': amount,
         'category': category
-    })
+    }
+    expenses.append(new_expense)
+    save_expenses([new_expense], filename='data.csv')
 
 
-# load_expenses(filename)   ← you already wrote this
-# save_expenses(expenses, filename)  ← you already wrote this
+def load_expenses(filename):
+    expenses = []
+    try:
+        with open(filename, 'r') as file:
+            reader = csv.DictReader(file)
+            expenses = [{
+                "date": row['date'],
+                'name': row['name'],
+                'amount': float(row['amount']),
+                'category': row['category']
+            } for row in reader]
+
+    except FileNotFoundError:
+        print("No expenses file found — starting fresh.")
+    except PermissionError:
+        print("Can't read that file — permission denied.")
+
+    finally:
+        return expenses
+
+
+def save_expenses(expenses, filename):
+    file_exists = os.path.isfile(filename)
+
+    with open(filename, "a", newline="") as file:
+        fieldnames = ["date", "name", "amount", "category"]
+        writer = csv.DictWriter(file, fieldnames)
+        if not file_exists:
+            writer.writeheader()
+        writer.writerows(expenses)
+    print(f"Saved {len(expenses)} Records Successfully!")
+
 # add_expense(expenses, name, amount, category)
 # get_category_total(expenses, category)
 # get_monthly_summary(expenses)
