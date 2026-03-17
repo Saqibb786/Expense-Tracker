@@ -6,8 +6,8 @@ import os
 class ExpenseTracker:
     def __init__(self, name, filename="data.csv"):
         self.filename = filename
+        self.name = name.capitalize()
         self.expenses = self.load_expenses()
-        self.name = name
         self.balance = self.load_balance()
 
     def __str__(self):
@@ -15,7 +15,7 @@ class ExpenseTracker:
 
     def print_menu(self):
         print('='*30)
-        print(f"{'PERSONAL EXPENSE TRACKER':^30}")
+        print(f"{self.name}'s EXPENSE TRACKER")
         print('='*30)
         print('1. Add expense')
         print('2. Add Balance')
@@ -57,6 +57,9 @@ class ExpenseTracker:
             print(f"{key:<15}: ${value:.2f} {flag}")
 
     def print_monthly_summary(self):
+        if not self.expenses:
+            print("No expenses recorded yet.\n")
+            return
         monthly_expenses = self.get_monthly_expenses()
         summary = {}
         for month, expenses in monthly_expenses.items():
@@ -102,6 +105,7 @@ class ExpenseTracker:
         category = self.get_valid_category()
 
         new_expense = {
+            "name": self.name,
             "date": current_datetime,
             'description': description,
             'amount': amount,
@@ -123,12 +127,14 @@ class ExpenseTracker:
         try:
             with open(self.filename, 'r') as file:
                 reader = csv.DictReader(file)
-                expenses = [{
-                    "date": row['date'],
-                    'description': row['description'],
-                    'amount': float(row['amount']),
-                    'category': row['category']
-                } for row in reader]
+                for row in reader:
+                    if row["name"] == self.name:
+                        expenses.append({
+                            "date": row['date'],
+                            'description': row['description'],
+                            'amount': float(row['amount']),
+                            'category': row['category']
+                        })
 
         except FileNotFoundError:
             print("No expenses file found — starting fresh.")
@@ -141,7 +147,7 @@ class ExpenseTracker:
         file_exists = os.path.isfile(self.filename)
 
         with open(self.filename, "a", newline="") as file:
-            fieldnames = ["date", "description", "amount", "category"]
+            fieldnames = ["name", "date", "description", "amount", "category"]
             writer = csv.DictWriter(file, fieldnames)
             if not file_exists:
                 writer.writeheader()
@@ -193,9 +199,6 @@ class ExpenseTracker:
         return summary
 
     def get_monthly_expenses(self):
-        if not self.expenses:
-            print("No expenses recorded yet.\n")
-            return
         monthly = {}
         for expense in self.expenses:
             month = datetime.strptime(
