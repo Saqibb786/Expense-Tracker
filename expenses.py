@@ -23,6 +23,7 @@ class ExpenseTracker:
         print('4. View all expenses')
         print('5. View total by category')
         print('6. View monthly summary')
+        print('7. Delete Expense')
         print('0. Exit')
 
     def print_header(self, title):
@@ -33,7 +34,7 @@ class ExpenseTracker:
             print("No expenses recorded yet.\n")
             return
         for expense in self.expenses:
-            print(f"{expense["description"]:<15}: ${expense['amount']:.2f}")
+            print(f"{expense['description']:<15}: ${expense['amount']:.2f}")
         print(f"{'TOTAL SPENDING':<15}= ${self.get_total_spending():.2f}")
 
     def print_current_balance(self):
@@ -45,7 +46,7 @@ class ExpenseTracker:
                 f"You are under debt 🤯  of ${abs(self.balance):.2f} so far you spended ${self.get_total_spending():.2f}")
         else:
             print(
-                f"Hello 👋🏻  {self.name} your balance is ${self.balance:.2f} so far you spended ${self.get_total_spending():.2f}")
+                f"Hello 👋🏻 {self.name} your balance is ${self.balance:.2f} so far you spended ${self.get_total_spending():.2f}")
 
     def print_spending_by_category(self):
         if not self.expenses:
@@ -69,7 +70,7 @@ class ExpenseTracker:
     def get_valid_description(self):
         while True:
             description = input(
-                f"{"Enter Description":<15}: ").strip().capitalize()
+                f"{'Enter Description':<15}: ").strip().capitalize()
             if len(description) < 2:
                 print("Description must be greater than two characters! Try Again..")
                 continue
@@ -118,6 +119,38 @@ class ExpenseTracker:
         self.save_balance()
         print(f"✅ Expense added successfully.")
 
+    def delete_expense(self):
+        if not self.expenses:
+            print("No expenses to delete.\n")
+            return
+        description = self.get_valid_description()
+        # Find first matching expense in memory
+        match_index = None
+        for i, expense in enumerate(self.expenses):
+            if expense["description"] == description:
+                match_index = i
+                break
+        if match_index is None:
+            print(f"No expense found for '{description}'.")
+            return
+        removed = self.expenses.pop(match_index)
+        self.balance += float(removed["amount"])
+        other_rows = []
+        try:
+            with open(self.filename, "r", newline="") as file:
+                reader = csv.DictReader(file)
+                other_rows = [row for row in reader if row.get(
+                    "name") != self.name]
+        except FileNotFoundError:
+            pass
+        my_rows = [{"name": self.name, **expense}
+                   for expense in self.expenses]
+        self.save_expenses(other_rows + my_rows,
+                           mode='w', header=True)
+        self.save_balance()
+        print(
+            f"🗑️ Deleted expense: {removed['description']} (${removed['amount']:.2f})")
+
     def add_balance(self):
         self.balance += self.get_valid_amount()
         self.save_balance()
@@ -143,13 +176,13 @@ class ExpenseTracker:
 
         return expenses
 
-    def save_expenses(self, expense):
+    def save_expenses(self, expense, mode='a', header=False):
         file_exists = os.path.isfile(self.filename)
 
-        with open(self.filename, "a", newline="") as file:
+        with open(self.filename, mode, newline="") as file:
             fieldnames = ["name", "date", "description", "amount", "category"]
             writer = csv.DictWriter(file, fieldnames)
-            if not file_exists:
+            if not file_exists or header:
                 writer.writeheader()
             writer.writerows(expense)
 
@@ -211,7 +244,7 @@ class ExpenseTracker:
     def run(self):
         while True:
             self.print_menu()
-            choice = input('Enter choice (0-6): ').strip()
+            choice = input('Enter choice (0-7): ').strip()
             if choice == '1':
                 # get input, call add_expense
                 self.print_header("Add Expense")
@@ -239,6 +272,10 @@ class ExpenseTracker:
                 # call get_monthly_summary
                 self.print_header("Spending By Month")
                 self.print_monthly_summary()
+                print('')
+            elif choice == '7':
+                self.print_header("Delete Expense")
+                self.delete_expense()
                 print('')
             elif choice == '0':
                 print('GoodBye 😊')
