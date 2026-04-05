@@ -1,4 +1,4 @@
-from expenses import ExpenseTracker
+from models.expenses import ExpenseTracker
 
 
 def main():
