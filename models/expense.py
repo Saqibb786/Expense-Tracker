@@ -6,10 +6,7 @@ class Expense:
     def __init__(self, name, amount, category, date_time=datetime.now()):
         self.name = str(name).strip().capitalize()
         self.amount = float(amount)
-        if Category(category.capitalize()):
-            self.category = Category(category)
-        else:
-            self.category = Category.OTHER
+        self.category = self._parse_category(category)
         self.date_time = date_time
 
     def __str__(self):
@@ -33,6 +30,7 @@ class Expense:
             date_time=datetime.fromisoformat(row["date_time"]),
         )
 
+    @classmethod
     def to_csv_row(self):
         return {
             "name": self.name,
