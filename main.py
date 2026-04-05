@@ -11,6 +11,7 @@ def print_all_expenses(tracker: Expense_manager):
         return
     for expense in tracker.expenses:
         print(f"{expense.name:<15}: ${expense.amount:.2f}")
+    print("_"*25)
     print(f"{'TOTAL SPENDING':<15}= ${tracker.get_total_spending():.2f}")
 
 

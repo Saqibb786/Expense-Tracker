@@ -30,7 +30,6 @@ class Expense:
             date_time=datetime.fromisoformat(row["date_time"]),
         )
 
-    @classmethod
     def to_csv_row(self):
         return {
             "name": self.name,

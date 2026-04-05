@@ -13,7 +13,7 @@ class Expense_manager:
 
     def add_expense(self, name, amount, category):
         new_expense = Expense(name, amount, category)
-        self.expenses.append(new_expense)
+        self.__expenses.append(new_expense)
         self.storage.save_expenses(self.__expenses)
 
     def delete_expense(self, name):
