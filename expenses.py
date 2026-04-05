@@ -11,7 +11,7 @@ class ExpenseTracker:
         self.balance = self.load_balance()
 
     def __str__(self):
-        return f"Hello 👋🏻 {self.name} your total spending is ${self.get_total_spending():.2f} and you balance is ${self.balance:.2f}"
+        return f"Hello 👋🏻 {self.name} your total spending is ${self.get_total_spending():.2f} and your balance is ${self.balance:.2f}"
 
     def print_menu(self):
         print('='*30)
@@ -64,7 +64,7 @@ class ExpenseTracker:
         monthly_expenses = self.get_monthly_expenses()
         summary = {}
         for month, expenses in monthly_expenses.items():
-            summary[month] = sum([expense["amount"] for expense in expenses])
+            summary[month] = sum(expense["amount"] for expense in expenses)
             print(f"{month:<15}: ${summary[month]:.2f}")
 
     def get_valid_description(self):
@@ -136,13 +136,11 @@ class ExpenseTracker:
         removed = self.expenses.pop(match_index)
         self.balance += float(removed["amount"])
         other_rows = []
-        try:
-            with open(self.filename, "r", newline="") as file:
-                reader = csv.DictReader(file)
-                other_rows = [row for row in reader if row.get(
-                    "name") != self.name]
-        except FileNotFoundError:
-            pass
+        with open(self.filename, "r", newline="") as file:
+            reader = csv.DictReader(file)
+            other_rows = [row for row in reader if row.get(
+                "name") != self.name]
+
         my_rows = [{"name": self.name, **expense}
                    for expense in self.expenses]
         self.save_expenses(other_rows + my_rows,
@@ -199,19 +197,17 @@ class ExpenseTracker:
 
     def save_balance(self):
         rows = []
-        try:
-            with open("balance.csv", "r", newline="") as file:
-                reader = csv.DictReader(file)
-                rows = list(reader)
-        except FileNotFoundError:
-            rows = []
+        with open("balance.csv", "r", newline="") as file:
+            reader = csv.DictReader(file)
+            rows = list(reader)
 
         updated = False
-        for row in rows:
-            if row["name"] == self.name:
-                row["balance"] = f"{self.balance:.2f}"
-                updated = True
-                break
+        if rows:
+            for row in rows:
+                if row["name"] == self.name:
+                    row["balance"] = f"{self.balance:.2f}"
+                    updated = True
+                    break
 
         if not updated:
             rows.append({"name": self.name, "balance": f"{self.balance:.2f}"})
