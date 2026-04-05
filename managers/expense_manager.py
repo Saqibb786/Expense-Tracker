@@ -16,13 +16,18 @@ class Expense_manager:
         self.__expenses.append(new_expense)
         self.storage.save_expenses(self.__expenses)
 
-    def delete_expense(self, name):
-        for i, expense in enumerate(self.__expenses):
-            if expense.name == name.capitalize():
-                self.__expenses.pop(i)
-                self.storage.save_expenses(self.__expenses)
-                return True
-        return False
+    def delete_expense(self, name, date):
+        matched_expenses = []
+        for expense in self.__expenses:
+            if expense.name == name and expense.date_time.date() == date:
+                matched_expenses.append(expense)
+        if not matched_expenses:
+            return 0
+
+        self.__expenses = [
+            expense for expense in self.__expenses if expense not in matched_expenses]
+        self.storage.save_expenses(self.__expenses)
+        return len(matched_expenses)
 
     def get_total_spending(self):
         return sum(expense.amount for expense in self.__expenses)

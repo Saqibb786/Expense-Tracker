@@ -1,4 +1,7 @@
 from managers.expense_manager import Expense_manager
+from datetime import datetime
+
+# --------------------- Utilities ---------------------
 
 
 def print_header(title):
@@ -35,6 +38,8 @@ def print_monthly_summary(tracker: Expense_manager):
         summary[month] = sum(expense.amount for expense in expenses)
         print(f"{month:<15}: ${summary[month]:.2f}")
 
+# --------------------- INPUTS ---------------------
+
 
 def get_valid_name():
     while True:
@@ -67,6 +72,16 @@ def get_valid_category():
         return category
 
 
+def get_valid_date():
+    while True:
+        date_text = input(f"{'Enter date (YYYY-MM-DD)':<15}: ").strip()
+        try:
+            return datetime.strptime(date_text, "%Y-%m-%d").date()
+        except ValueError:
+            print("Invalid date format. Use YYYY-MM-DD.")
+
+
+# --------------------- UI ---------------------
 def print_menu():
     print_header("Menu")
     print('1. Add expense')
@@ -79,7 +94,7 @@ def print_menu():
 
 def run(tracker: Expense_manager):
     print("-"*50)
-    print(f"{"EXPENSE TRANCKER":^50}")
+    print(f"{'EXPENSE TRACKER':^50}")
     print("-"*50)
     while True:
         print_menu()
@@ -112,9 +127,12 @@ def run(tracker: Expense_manager):
             print_header("Delete Expense")
             if tracker.expenses:
                 name = get_valid_name()
-                print("✅ Deleted Successfully") if tracker.delete_expense(
-                    name) else print("No expense recorded with that name!")
-
+                date = get_valid_date()
+                deleted_count = tracker.delete_expense(name, date)
+                if deleted_count:
+                    print(f"✅ Deleted {deleted_count} expense(s).")
+                else:
+                    print("No expense found for that name and date!")
             else:
                 print("No expenses recorded yet.\n")
             print('')
