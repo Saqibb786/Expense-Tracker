@@ -1,14 +1,11 @@
 from datetime import datetime
 from models.category import Category
 
-import csv
-import os
-
 
 class Expense:
     def __init__(self, name, amount, category):
         self.name = name.capitalize()
-        self.current_datetime = datetime.now()
+        self.date_time = datetime.now()
         self.amount = amount
         if Category(category):
             self.category = Category(category)
