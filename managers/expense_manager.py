@@ -6,18 +6,18 @@ from storage.csv_storage import CSV_storage
 class Expense_manager:
     def __init__(self, storage=CSV_storage):
         self.storage = storage()
-        self.expenses = storage.load_expenses()
+        self.expenses = self.storage.load_expenses()
 
     def add_expense(self, name, amount, category):
         new_expense = Expense(name, amount, category)
         self.expenses.append(new_expense)
-        self.storage.save_expenses()
+        self.storage.save_expenses(self.expenses)
 
     def delete_expense(self, name):
         for i, expense in enumerate(self.expenses):
-            if expense.name == name:
+            if expense.name == name.capitalize():
                 self.expenses.pop(i)
-                self.storage.save_expenses()
+                self.storage.save_expenses(self.expenses)
                 return True
         return False
 
@@ -27,7 +27,7 @@ class Expense_manager:
     def get_spending_by_category(self):
         summary = {}
         for expense in self.expenses:
-            cat = expense.category
+            cat = expense.category.value
             summary[cat] = summary.get(cat, 0) + expense.amount
         return summary
 
