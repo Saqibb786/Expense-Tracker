@@ -10,7 +10,7 @@ class Expense:
         self.date_time = date_time
 
     def __str__(self):
-        return f"{self.name} : ${self.amount:.2f} | Date: {self.date_time.strftime('%d %B %Y')}"
+        return f"{self.name:<10}: ${self.amount:.2f} | {self.date_time.strftime('%I:%M %p on %a %D')}"
 
     @staticmethod
     def _parse_category(category):
