@@ -67,9 +67,7 @@ def get_valid_category():
 
 
 def print_menu():
-    print('='*30)
-    print(f"EXPENSE TRACKER")
-    print('='*30)
+    print_header("Menu")
     print('1. Add expense')
     print('2. View all expenses')
     print('3. View total by category')
@@ -80,7 +78,7 @@ def print_menu():
 
 def run(tracker: Expense_manager):
     print("-"*50)
-    print(f"{"PERSONAL EXPENSE TRANCKER":^50}")
+    print(f"{"EXPENSE TRANCKER":^50}")
     print("-"*50)
     while True:
         print_menu()
@@ -92,6 +90,8 @@ def run(tracker: Expense_manager):
             amount = get_valid_amount()
             category = get_valid_category()
             tracker.add_expense(name, amount, category)
+            print("✅ Expense added successfully.")
+
         elif choice == '2':
             # call display_all
             print_header("View All Expenses")
@@ -109,8 +109,13 @@ def run(tracker: Expense_manager):
             print('')
         elif choice == '5':
             print_header("Delete Expense")
-            name = get_valid_name()
-            tracker.delete_expense()
+            if tracker.expenses:
+                name = get_valid_name()
+                print("✅ Deleted Successfully") if tracker.delete_expense(
+                    name) else print("No expense recorded with that name!")
+
+            else:
+                print("No expenses recorded yet.\n")
             print('')
         elif choice == '6':
             print('GoodBye 😊')

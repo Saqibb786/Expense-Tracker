@@ -1,5 +1,4 @@
 from models.expense import Expense
-from models.category import Category
 from storage.csv_storage import CSV_storage
 
 
